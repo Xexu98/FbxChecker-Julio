@@ -9,6 +9,7 @@ namespace fs = std::filesystem;
 Menu::Menu()
 {
 	r = new Reader();
+	e = new ExportFbx();
 }
 
 Menu::~Menu()
@@ -17,7 +18,7 @@ Menu::~Menu()
 
 void Menu::init(bool fixFbx)
 {
-	Output::init();
+
 	//Check the .exe folder and put in a string's stack the fbx object's names
 	std::stack<std::string> s;
 	for (const auto& entry : fs::directory_iterator(fs::current_path().root_name())) {
@@ -33,40 +34,69 @@ void Menu::init(bool fixFbx)
 	std::string percentStr = "",
 		emptyStr = "";
 
-	//go through the stack
-	while (!s.empty())
+	if (fixFbx)
 	{
-		//things for the render
-		loaded += percent;
-		//loading interface render
-		std::string load = "";
-		for (int i = 0; i < 50.0f; i++)
+		while (!s.empty())
 		{
-			if (i < loaded)
-				load += "/";
-			else
-				load += " ";
-		}
-		std::cout << "		-FBX ANALYZER-\n";
-		std::cout << "\nCHEKING: \n[" + load + "] \n\n";
-
-		//Reader routine
-		if (r->correctFile(s.top().c_str())) {
-			if (fixFbx)
+			//things for the render
+			loaded += percent;
+			//loading interface render
+			std::string load = "";
+			for (int i = 0; i < 50.0f; i++)
 			{
-;				r->processScene();
-				r->clear();
+				if (i < loaded)
+					load += "/";
+				else
+					load += " ";
 			}
-			else
+			std::cout << "		-FBX ANALYZER-\n";
+			std::cout << "\nCHEKING: \n[" + load + "] \n\n";
+
+			//Reader routine
+			if (r->correctFile(s.top().c_str())) {
+
+					r->processScene();
+					e->addFbxToFix(s.top().c_str(), r->returnActualScene());
+					r->clear();
+			}
+			s.pop();
+			system("cls");
+		}
+		e->exportFbxFixed();
+	}
+
+	else
+	{
+		Output::init();
+		//go through the stack
+		while (!s.empty())
+		{
+			//things for the render
+			loaded += percent;
+			//loading interface render
+			std::string load = "";
+			for (int i = 0; i < 50.0f; i++)
 			{
+				if (i < loaded)
+					load += "/";
+				else
+					load += " ";
+			}
+			std::cout << "		-FBX ANALYZER-\n";
+			std::cout << "\nCHEKING: \n[" + load + "] \n\n";
+
+			//Reader routine
+			if (r->correctFile(s.top().c_str())) {
+
 				Output::newFbx(s.top());
 				r->processScene();
 				r->clear();
 				Output::endFbx();
 			}
+			s.pop();
+			system("cls");
 		}
-		s.pop();
-		system("cls");
+		Output::end();
 	}
-	Output::end();
+	
 }

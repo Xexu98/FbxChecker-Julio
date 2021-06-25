@@ -11,8 +11,8 @@ private:
 	FbxScene* _scene;
 	std::string fixedName;
 	bool result;
-	const char* lNewFileName ;
-
+	char* FileName;
+	
 public:
 	Reader();
 	~Reader();
@@ -24,5 +24,7 @@ public:
 	FbxScene* returnActualScene() { return _scene; }
 	//clean and reset the scene
 	void clear();
+
+
 };
 

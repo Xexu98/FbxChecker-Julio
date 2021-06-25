@@ -1,7 +1,6 @@
 #pragma once
 #include <fbxsdk.h>
 #include <iostream>
-#include <string>
 #include <vector>
 
 class ExportFbx
@@ -13,7 +12,7 @@ private:
 	FbxExporter* lExporter;
 	FbxManager* _sdkManager;
 	bool result;
-	const char* lNewFileName;
+	const char* lNewFileNames;
 
 public:
 	ExportFbx();
