@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Checks.cpp" />
+    <ClCompile Include="ExportFbx.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Output.cpp" />
@@ -156,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Checks.h" />
+    <ClInclude Include="ExportFbx.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Output.h" />
     <ClInclude Include="Reader.h" />

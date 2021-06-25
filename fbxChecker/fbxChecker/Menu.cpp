@@ -15,7 +15,7 @@ Menu::~Menu()
 {
 }
 
-void Menu::init()
+void Menu::init(bool fixFbx)
 {
 	Output::init();
 	//Check the .exe folder and put in a string's stack the fbx object's names
@@ -52,10 +52,18 @@ void Menu::init()
 
 		//Reader routine
 		if (r->correctFile(s.top().c_str())) {
-			Output::newFbx(s.top());
-			r->processScene();
-			r->clear();
-			Output::endFbx();
+			if (fixFbx)
+			{
+;				r->processScene();
+				r->clear();
+			}
+			else
+			{
+				Output::newFbx(s.top());
+				r->processScene();
+				r->clear();
+				Output::endFbx();
+			}
 		}
 		s.pop();
 		system("cls");

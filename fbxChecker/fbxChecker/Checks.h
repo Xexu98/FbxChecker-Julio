@@ -10,6 +10,8 @@ private:
 	std::stack<std::string> badNamesStack;
 
 	int numTabs = 0;
+
+	bool fileFixed = false;
 public:
 	/**
 	Checks the whole scene, and prints the results of the check
@@ -93,5 +95,8 @@ private:
 	Utility method to print tabulations
 	*/
 	void printTabs();
+
+
+	bool returnFixed() { return fileFixed; }
 };
 

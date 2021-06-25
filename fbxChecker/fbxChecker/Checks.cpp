@@ -36,7 +36,6 @@ FbxString GetAttributeTypeName(FbxNodeAttribute::EType type) {
 
 bool Checks::checkAttributes(FbxNode* node) {
     bool isMesh = true; 
-
     for (int i = 0; i < node->GetNodeAttributeCount(); i++) {
         FbxNodeAttribute* attribute = node->GetNodeAttributeByIndex(i);
         FbxString typeName = GetAttributeTypeName(attribute->GetAttributeType());
@@ -44,15 +43,27 @@ bool Checks::checkAttributes(FbxNode* node) {
         printTabs();
 
         if (typeName == "camera" || typeName == "light") {
-            isMesh = false;
+            isMesh = false;        
+            FbxCamera* auxC= node->GetCamera();
+            if (auxC != nullptr)
+            {
+                auxC->Destroy();
+            }
+            FbxLight* auxL= node->GetLight();
+            if (auxL != nullptr)
+            {
+                auxL->Destroy();
+            }
+            
             break;
         }
     }
-
-    // TODO: fix this for child nodes too
+    
+        // TODO: fix this for child nodes too
     for (int j = 0; j < node->GetChildCount(); j++) {
-        isMesh &= checkAttributes(node->GetChild(j));
+         isMesh &= checkAttributes(node->GetChild(j));
     }
+    
 
     if (!isMesh) {
         std::string f = node->GetName();
@@ -66,7 +77,7 @@ bool Checks::checkAttributes(FbxNode* node) {
 void Checks::checkScaling(FbxNode* pNode) {
     const char* nodeName = pNode->GetName();
     fbxsdk::FbxDouble3 scaling = pNode->LclScaling.Get();
-
+   
     // Check if the scale is equal in all axis
     if (scaling[0] == scaling[1] && scaling[0] == scaling[2]) {
 
@@ -74,11 +85,13 @@ void Checks::checkScaling(FbxNode* pNode) {
         if (!((scaling[0] <= 1.001 && scaling[0] >= 1)
             && (scaling[1] <= 1.001 && scaling[1] >= 1)
             && (scaling[2] <= 1.001 && scaling[2] >= 1))) {
+            pNode->LclScaling.Set(FbxDouble3(1, 1, 1));
             Output::newFbxProblem(1, "Scale is equal in all axis but differs from unit= (" + std::to_string(scaling[0]) + ", " + std::to_string(scaling[1]) + ", " + std::to_string(scaling[2]) + ")");
             return;
         }
     }
     else {
+        pNode->LclScaling.Set(FbxDouble3(1, 1, 1));
         Output::newFbxProblem(2, "Scale is different in axis= (" + std::to_string(scaling[0]) + ", " + std::to_string(scaling[1]) + ", " + std::to_string(scaling[2]) + ")");
         return;
     }
@@ -87,11 +100,11 @@ void Checks::checkScaling(FbxNode* pNode) {
 void Checks::checkTranslation(FbxNode* pNode) {
     const char* nodeName = pNode->GetName();
     fbxsdk::FbxDouble3 translation = pNode->LclTranslation.Get();
-
     // Check if the translation is equal 0 in all axis
     if ( !((translation[0] <= 0.001 && translation[0] >= -0.001) 
         && (translation[1] <= 0.001 && translation[1] >= -0.001) 
         && (translation[2] <= 0.001 && translation[2] >= -0.001))) {
+        pNode->LclTranslation.Set(FbxDouble3(0, 0, 0));
         Output::newFbxProblem(1, "Translation is not equal to zero= (" + std::to_string(translation[0]) + ", " + std::to_string(translation[1]) + ", " + std::to_string(translation[2]) + ")");
     }
 }
@@ -116,9 +129,11 @@ void Checks::checkRotation(FbxNode* pNode) {
     if (ok) {
     }
     else if (exportRotation){
+        pNode->LclRotation.Set(FbxDouble3(0,0,0));
         Output::newFbxProblem(1, "Possible residual export rotations= (" + std::to_string(rotation[0]) + ", " + std::to_string(rotation[1]) + ", " + std::to_string(rotation[2]) + ")");
     }
     else {
+        pNode->LclRotation.Set(FbxDouble3(0,0,0));
         Output::newFbxProblem(2, "Rotation is different in some axis= (" + std::to_string(rotation[0]) + ", " + std::to_string(rotation[1]) + ", " + std::to_string(rotation[2]) + ")");
     }
 }
@@ -209,8 +224,13 @@ void Checks::checkUVs(FbxNode* node)
     FbxMesh* mesh = node->GetMesh();
     FbxStringList lUVSetNameList;
     mesh->GetUVSetNames(lUVSetNameList);
+   
+
     if (lUVSetNameList.GetCount() == 0)
+    {
         Output::newFbxProblem(2, "No UVs assigned");
+        mesh->CreateElementUV("");
+    }
     else
     {
         /*
@@ -225,6 +245,9 @@ void Checks::checkUVs(FbxNode* node)
 void Checks::checkTextures(FbxNode* node) {
     if (node->GetMaterialCount() == 0) {
         Output::newFbxProblem(1, "No material assigned, object cannot have texture");
+        FbxString lMaterialName = "mate";
+        FbxSurfacePhong* mat= FbxSurfacePhong::Create(node->GetScene(), lMaterialName.Buffer());;
+        node->AddMaterial(mat);
         return;
     }
     

@@ -8,9 +8,10 @@ class Menu
 public:
 	Menu();
 	~Menu();
-	void init();
+	void init(bool fixFbx);
 
 private:
+	
 	Reader* r;
 	std::string read;
 	const char* filename;
