@@ -17,6 +17,7 @@ private:
 public:
 	ExportFbx();
 	~ExportFbx();
+	void assingSdkManager(FbxManager* sM);
 	void addFbxToFix(std::string fbxName, FbxScene* _scene);
 	void exportFbxFixed();
 };

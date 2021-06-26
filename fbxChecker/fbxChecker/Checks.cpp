@@ -68,7 +68,10 @@ bool Checks::checkAttributes(FbxNode* node) {
     if (!isMesh) {
         std::string f = node->GetName();
         f += " is a light and/or camera";
-        Output::newFbxProblem(2, f);
+        if (!_export)
+        {
+            Output::newFbxProblem(2, f);
+        }
     }
 
     return isMesh;
@@ -85,14 +88,28 @@ void Checks::checkScaling(FbxNode* pNode) {
         if (!((scaling[0] <= 1.001 && scaling[0] >= 1)
             && (scaling[1] <= 1.001 && scaling[1] >= 1)
             && (scaling[2] <= 1.001 && scaling[2] >= 1))) {
-            pNode->LclScaling.Set(FbxDouble3(1, 1, 1));
-            Output::newFbxProblem(1, "Scale is equal in all axis but differs from unit= (" + std::to_string(scaling[0]) + ", " + std::to_string(scaling[1]) + ", " + std::to_string(scaling[2]) + ")");
+           
+            if (!_export)
+            {
+                Output::newFbxProblem(1, "Scale is equal in all axis but differs from unit= (" + std::to_string(scaling[0]) + ", " + std::to_string(scaling[1]) + ", " + std::to_string(scaling[2]) + ")");
+            }
+            else
+            {
+                pNode->LclScaling.Set(FbxDouble3(1, 1, 1));
+            }
             return;
         }
     }
     else {
-        pNode->LclScaling.Set(FbxDouble3(1, 1, 1));
-        Output::newFbxProblem(2, "Scale is different in axis= (" + std::to_string(scaling[0]) + ", " + std::to_string(scaling[1]) + ", " + std::to_string(scaling[2]) + ")");
+       
+        if (!_export)
+        {
+            Output::newFbxProblem(2, "Scale is different in axis= (" + std::to_string(scaling[0]) + ", " + std::to_string(scaling[1]) + ", " + std::to_string(scaling[2]) + ")");
+        }
+        else
+        {
+            pNode->LclScaling.Set(FbxDouble3(1, 1, 1));
+        }
         return;
     }
 }
@@ -104,8 +121,15 @@ void Checks::checkTranslation(FbxNode* pNode) {
     if ( !((translation[0] <= 0.001 && translation[0] >= -0.001) 
         && (translation[1] <= 0.001 && translation[1] >= -0.001) 
         && (translation[2] <= 0.001 && translation[2] >= -0.001))) {
-        pNode->LclTranslation.Set(FbxDouble3(0, 0, 0));
-        Output::newFbxProblem(1, "Translation is not equal to zero= (" + std::to_string(translation[0]) + ", " + std::to_string(translation[1]) + ", " + std::to_string(translation[2]) + ")");
+       
+        if (!_export)
+        {
+            Output::newFbxProblem(1, "Translation is not equal to zero= (" + std::to_string(translation[0]) + ", " + std::to_string(translation[1]) + ", " + std::to_string(translation[2]) + ")");
+        }
+        else
+        {
+            pNode->LclTranslation.Set(FbxDouble3(0, 0, 0));
+        }
     }
 }
 
@@ -129,12 +153,25 @@ void Checks::checkRotation(FbxNode* pNode) {
     if (ok) {
     }
     else if (exportRotation){
-        pNode->LclRotation.Set(FbxDouble3(0,0,0));
-        Output::newFbxProblem(1, "Possible residual export rotations= (" + std::to_string(rotation[0]) + ", " + std::to_string(rotation[1]) + ", " + std::to_string(rotation[2]) + ")");
+        
+        if (!_export)
+        {
+            Output::newFbxProblem(1, "Possible residual export rotations= (" + std::to_string(rotation[0]) + ", " + std::to_string(rotation[1]) + ", " + std::to_string(rotation[2]) + ")");
+        }
+        else
+        {
+            pNode->LclRotation.Set(FbxDouble3(0, 0, 0));
+        }
     }
     else {
-        pNode->LclRotation.Set(FbxDouble3(0,0,0));
-        Output::newFbxProblem(2, "Rotation is different in some axis= (" + std::to_string(rotation[0]) + ", " + std::to_string(rotation[1]) + ", " + std::to_string(rotation[2]) + ")");
+        if (!_export)
+        {
+            Output::newFbxProblem(2, "Rotation is different in some axis= (" + std::to_string(rotation[0]) + ", " + std::to_string(rotation[1]) + ", " + std::to_string(rotation[2]) + ")");
+        }
+        else
+        {
+            pNode->LclRotation.Set(FbxDouble3(0, 0, 0));
+        }
     }
 }
 
@@ -160,7 +197,10 @@ void Checks::checkName(const char* nNode) {
     bool actualBadName = false;
     while (!badNamesStack.empty() && !actualBadName) {
         if (name.find(badNamesStack.top()) != std::string::npos) {
-            Output::newFbxProblem(1, name + " is a bad name, please change it");
+            if (!_export)
+            {
+                Output::newFbxProblem(1, name + " is a bad name, please change it");
+            }
             goodName = false;
             actualBadName = true;
         }
@@ -197,10 +237,16 @@ void Checks::checkNgons(FbxNode* node) {
     case 3:
         break;
     case 4:
-        Output::newFbxProblem(1, "Some quads present");
+        if (!_export)
+        {
+            Output::newFbxProblem(1, "Some quads present");
+        }
         break;
     default:
-        Output::newFbxProblem(2, " there are N-gons in the mesh");
+        if (!_export)
+        {
+            Output::newFbxProblem(2, " there are N-gons in the mesh");
+        }
         break;
     }
 }
@@ -214,7 +260,10 @@ void Checks::checkNormals(FbxNode* node) {
         FbxGeometryElementNormal* normalElement = mesh->GetElementNormal();
 
         if (!normalElement) {
-            Output::newFbxProblem(1 , "object does not have normals");
+            if (!_export)
+            {
+                Output::newFbxProblem(1, "object does not have normals");
+            }
         }
     }
 }
@@ -226,10 +275,16 @@ void Checks::checkUVs(FbxNode* node)
     mesh->GetUVSetNames(lUVSetNameList);
    
 
-    if (lUVSetNameList.GetCount() == 0)
+    if (lUVSetNameList.GetCount() == 0 )
     {
-        Output::newFbxProblem(2, "No UVs assigned");
-        mesh->CreateElementUV("");
+        if (!_export)
+        {
+            Output::newFbxProblem(2, "No UVs assigned");
+        }
+        else
+        {
+            //mesh->CreateElementUV("UVMaping");
+        } 
     }
     else
     {
@@ -244,10 +299,16 @@ void Checks::checkUVs(FbxNode* node)
 
 void Checks::checkTextures(FbxNode* node) {
     if (node->GetMaterialCount() == 0) {
-        Output::newFbxProblem(1, "No material assigned, object cannot have texture");
-        FbxString lMaterialName = "mate";
-        FbxSurfacePhong* mat= FbxSurfacePhong::Create(node->GetScene(), lMaterialName.Buffer());;
-        node->AddMaterial(mat);
+        if (!_export)
+        {
+            Output::newFbxProblem(1, "No material assigned, object cannot have texture");
+        }
+        else
+        {
+            FbxString lMaterialName = "mate";
+            FbxSurfacePhong* mat = FbxSurfacePhong::Create(node->GetScene(), lMaterialName.Buffer());;
+            node->AddMaterial(mat);
+        } 
         return;
     }
     
@@ -275,14 +336,20 @@ void Checks::checkTextures(FbxNode* node) {
                         for (int k = 0; k < numTextures; ++k) {
                             FbxTexture* texture = layeredTexture->GetSrcObject<FbxTexture>(k);
                             if (!texture) {
-                                Output::newFbxProblem(1, "Some textures missing");
+                                if (!_export)
+                                {
+                                    Output::newFbxProblem(1, "Some textures missing");
+                                }
                             }
                         }
                     } // if(layeredTexture)
                     else {
                         FbxTexture* texture = prop.GetSrcObject<FbxTexture>(currentTexture);
                         if (!texture) {
-                            Output::newFbxProblem(1, "Some textures missing");
+                            if (!_export)
+                            {
+                                Output::newFbxProblem(1, "Some textures missing");
+                            }
                         }
                     } // else
                 }// for(texture loop)
@@ -290,13 +357,39 @@ void Checks::checkTextures(FbxNode* node) {
         } //FBXSDK_FOR_EACH_TEXTURE
 
         if (!textureExists) {
-            Output::newFbxProblem(1, "Some textures missing");
+            if (!_export)
+            {
+                Output::newFbxProblem(1, "Some textures missing");
+            }
         }
     }
 }
 
 
-void Checks::completeCheck(FbxScene* scene) {
+void Checks::completeCheck(FbxScene* scene, bool exFbx) {
+    FbxNode* rootNode = scene->GetRootNode();
+    _export = exFbx;
+    if (rootNode) {
+
+        badName = true;
+        goodName = true;
+
+        for (int i = 0; i < rootNode->GetChildCount(); i++) {
+            processNode(rootNode->GetChild(i));
+        }
+
+        if (!_export)
+        {
+            if (badName)
+                Output::newFbxProblem(2, "all the node's names are bad ");
+            else if (!goodName)
+                Output::newFbxProblem(2, "some names are names are bad ");
+        }
+    }
+}
+
+void Checks::completeCheck(FbxScene* scene)
+{
     FbxNode* rootNode = scene->GetRootNode();
     if (rootNode) {
 
@@ -307,11 +400,13 @@ void Checks::completeCheck(FbxScene* scene) {
             processNode(rootNode->GetChild(i));
         }
 
-
-        if (badName)
-            Output::newFbxProblem(2, "all the node's names are bad ");
-        else if (!goodName)
-            Output::newFbxProblem(2, "some names are names are bad ");
+        if (!_export)
+        {
+            if (badName)
+                Output::newFbxProblem(2, "all the node's names are bad ");
+            else if (!goodName)
+                Output::newFbxProblem(2, "some names are names are bad ");
+        }
     }
 }
 
@@ -349,7 +444,10 @@ void Checks::processNode(FbxNode* node) {
             checkTextures(node->GetChild(j));
         }
     }
-
+    else
+    {
+        node->Destroy();
+    }
     numTabs--;
     printTabs();
 }

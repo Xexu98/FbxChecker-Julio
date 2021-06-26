@@ -12,12 +12,16 @@ private:
 	int numTabs = 0;
 
 	bool fileFixed = false;
+
+	bool _export;
 public:
 	/**
 	Checks the whole scene, and prints the results of the check
 
 	@param scene (FbxScene*) scene that will be checked
 	*/
+	void completeCheck(FbxScene* scene, bool exFbx);
+
 	void completeCheck(FbxScene* scene);
 
 private:

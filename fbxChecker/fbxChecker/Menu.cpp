@@ -50,13 +50,12 @@ void Menu::init(bool fixFbx)
 					load += " ";
 			}
 			std::cout << "		-FBX ANALYZER-\n";
-			std::cout << "\nCHEKING: \n[" + load + "] \n\n";
+			std::cout << "\nEXPORTING: \n[" + load + "] \n\n";
 
 			//Reader routine
 			if (r->correctFile(s.top().c_str())) {
 
-					r->processScene();
-					e->addFbxToFix(s.top().c_str(), r->returnActualScene());
+					r->processScene(true,e, s.top().c_str());	
 					r->clear();
 			}
 			s.pop();

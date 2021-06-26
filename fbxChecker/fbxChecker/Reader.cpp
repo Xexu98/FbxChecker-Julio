@@ -33,11 +33,20 @@ bool Reader::correctFile(const char* filenmame)
     }
 }
 
+void Reader::processScene(bool exFbx, ExportFbx* exp,std::string name)
+{
+    Checks checker;
+    checker.completeCheck(_scene, exFbx);
+    exp->assingSdkManager(_sdkManager);
+    exp->addFbxToFix(name, _scene);
+}
+
 void Reader::processScene()
 {
     Checks checker;
     checker.completeCheck(_scene);
-    
+}
+
   /*  FbxExporter* lExporter = FbxExporter::Create(_sdkManager, "");
     if (fixedName == "Rotated-Scaled.fbx")
     {    
@@ -49,7 +58,7 @@ void Reader::processScene()
         result = lExporter->Export(_scene);
     }*/
    
-}
+
 
 void Reader::clear()
 {

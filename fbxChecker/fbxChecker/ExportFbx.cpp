@@ -14,10 +14,6 @@ const char* lFileTypes[] =
 
 ExportFbx::ExportFbx()
 {
-	_sdkManager = FbxManager::Create();
-	FbxIOSettings* ios = FbxIOSettings::Create(_sdkManager, IOSROOT);
-	_sdkManager->SetIOSettings(ios);
-	lExporter = FbxExporter::Create(_sdkManager, "");
 }
 
 ExportFbx::~ExportFbx()
@@ -26,8 +22,17 @@ ExportFbx::~ExportFbx()
 	lExporter = nullptr;
 }
 
+void ExportFbx::assingSdkManager(FbxManager* sM)
+{
+	_sdkManager = sM;
+	FbxIOSettings* ios = FbxIOSettings::Create(_sdkManager, IOSROOT);
+	_sdkManager->SetIOSettings(ios);
+	lExporter = FbxExporter::Create(_sdkManager, "");
+}
+
 void ExportFbx::addFbxToFix(std::string fbxName, FbxScene* _scene)
 {
+	fbxName.erase(fbxName.size()-4,4);
 	fbxNames.push_back(fbxName);
 	_scenes.push_back(_scene);
 }
