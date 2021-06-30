@@ -3,19 +3,33 @@
 #include "Menu.h"
 #include <string>
 
-int main(std::string argv)
+int main(int argc, char* argv[])
 {
-    Menu* m = new Menu();
 
-   if (argv == "--fixerror")
-   {
-       m->init(true);
-   }
-   else
-   {
-       m->init(false);
-   }   
-    //int i = 0;
+    bool entra = true;;
+    Menu* m = new Menu();
+    const char* c =  "--fixerror" ;
+    int i = 0;
+    while (i<11)
+    {
+        if (argv[1][i] != c[i])
+        {
+            entra = false;
+        }
+        i++;
+    }
+    
+    if (entra)
+    {
+        m->init(true);
+        //std::cout << "eNTRA" << "\n";
+    }
+    else
+    {
+        m->init(false);
+        //std::cout << "no entra" << "\n";
+    } 
+
 }
    
     
