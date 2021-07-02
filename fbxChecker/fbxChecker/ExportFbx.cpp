@@ -30,11 +30,15 @@ void ExportFbx::assingSdkManager(FbxManager* sM)
 	lExporter = FbxExporter::Create(_sdkManager, "");
 }
 
-void ExportFbx::addFbxToFix(std::string fbxName, FbxScene* _scene)
+void ExportFbx::addFbxToFix(std::string fbxName, FbxScene* _scene,bool err)
 {
-	fbxName.erase(fbxName.size()-4,4);
-	fbxNames.push_back(fbxName);
-	_scenes.push_back(_scene);
+	if (err)
+	{
+		fbxName.erase(fbxName.size() - 4, 4);
+		fbxNames.push_back(fbxName);
+		_scenes.push_back(_scene);
+	}
+	
 }
 
 void ExportFbx::exportFbxFixed()

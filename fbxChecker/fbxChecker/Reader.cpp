@@ -27,6 +27,7 @@ bool Reader::correctFile(const char* filenmame)
     {
         fixedName = filenmame;
         _scene = FbxScene::Create(_sdkManager, "myScene");
+       
         _importer->Import(_scene);
         _importer->Destroy();
         return true;
@@ -38,7 +39,7 @@ void Reader::processScene(bool exFbx, ExportFbx* exp,std::string name)
     Checks checker;
     checker.completeCheck(_scene, exFbx);
     exp->assingSdkManager(_sdkManager);
-    exp->addFbxToFix(name, _scene);
+    exp->addFbxToFix(name, _scene, checker.returnError());
 }
 
 void Reader::processScene()

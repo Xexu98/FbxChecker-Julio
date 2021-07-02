@@ -14,6 +14,8 @@ private:
 	bool fileFixed = false;
 
 	bool _export;
+
+	bool _error;
 public:
 	/**
 	Checks the whole scene, and prints the results of the check
@@ -23,6 +25,8 @@ public:
 	void completeCheck(FbxScene* scene, bool exFbx);
 
 	void completeCheck(FbxScene* scene);
+
+	bool returnError() { return _error; }
 
 private:
 	/**
@@ -102,5 +106,7 @@ private:
 
 
 	bool returnFixed() { return fileFixed; }
+
+
 };
 
