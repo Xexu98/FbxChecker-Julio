@@ -44,7 +44,7 @@ void Reader::processScene(bool exFbx, ExportFbx* exp,std::string name)
 
 void Reader::processScene()
 {
-    Checks checker;
+    Checks checker;    
     checker.completeCheck(_scene);
 }
 
@@ -58,8 +58,6 @@ void Reader::processScene()
         result = lExporter->Initialize(FileName, lFormat, _sdkManager->GetIOSettings());
         result = lExporter->Export(_scene);
     }*/
-   
-
 
 void Reader::clear()
 {

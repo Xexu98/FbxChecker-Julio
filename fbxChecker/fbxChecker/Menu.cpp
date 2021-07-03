@@ -49,7 +49,7 @@ void Menu::init(bool fixFbx)
 				else
 					load += " ";
 			}
-			std::cout << "		-FBX ANALYZER-\n";
+			std::cout << "		-FBX CHECKER-\n";
 			std::cout << "\nEXPORTING: \n[" + load + "] \n\n";
 
 			//Reader routine

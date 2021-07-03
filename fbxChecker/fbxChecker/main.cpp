@@ -11,15 +11,23 @@ int main(int argc, char* argv[])
     const char* c =  "--fixerror" ;
     int i = 0;
 
-    while (i<11)
+    if (argv[1] == nullptr)
     {
-        if (argv[1][i] != c[i])
-        {
-            entra = false;
-        }
-
-        i++;
+        entra = false;
     }
+    else
+    {
+        while (i < 11)
+        {
+            if (argv[1][i] != c[i])
+            {
+                entra = false;
+            }
+
+            i++;
+        }
+    }
+   
     
     if (entra)
     {
