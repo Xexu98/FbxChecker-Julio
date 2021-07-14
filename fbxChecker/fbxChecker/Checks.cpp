@@ -358,6 +358,14 @@ void Checks::checkUVs(FbxNode* node)
     }
 }
 
+void Checks::checkFileVersion()
+{
+    if (!_export && _lFileMajor <= 6 && _lFileMinor <= 5 )
+    {
+        Output::newFbxProblem(1, "The file version is 6.0 or less this can generate problems in some programs");
+    }
+}
+
 void Checks::checkTextures(FbxNode* node) {
     if (node->GetMaterialCount() == 0) {
         if (!_export)
@@ -440,10 +448,12 @@ void Checks::checkTextures(FbxNode* node) {
 }
 
 
-void Checks::completeCheck(FbxScene* scene, bool exFbx) {
+void Checks::completeCheck(FbxScene* scene, bool exFbx, int lFileMajor, int lFileMinor) {
     FbxNode* rootNode = scene->GetRootNode();
     _export = exFbx;
     if (rootNode) {
+        _lFileMajor = lFileMajor;
+        _lFileMinor = lFileMinor;
 
         for (int i = 0; i < rootNode->GetChildCount(); i++) {
             processNode(rootNode->GetChild(i));
@@ -452,10 +462,12 @@ void Checks::completeCheck(FbxScene* scene, bool exFbx) {
     }
 }
 
-void Checks::completeCheck(FbxScene* scene)
+void Checks::completeCheck(FbxScene* scene, int lFileMajor, int lFileMinor)
 {
     FbxNode* rootNode = scene->GetRootNode();
     if (rootNode) {
+        _lFileMajor = lFileMajor;
+        _lFileMinor = lFileMinor;
 
         for (int i = 0; i < rootNode->GetChildCount(); i++) {
             processNode(rootNode->GetChild(i));

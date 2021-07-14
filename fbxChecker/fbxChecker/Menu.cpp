@@ -50,7 +50,7 @@ void Menu::init(bool fixFbx)
 					load += " ";
 			}
 			std::cout << "		-FBX CHECKER-\n";
-			std::cout << "\nEXPORTING: \n[" + load + "] \n\n";
+			std::cout << "\nCHEKING: \n[" + load + "] \n\n";
 
 			//Reader routine
 			if (r->correctFile(s.top().c_str())) {
@@ -61,7 +61,10 @@ void Menu::init(bool fixFbx)
 			s.pop();
 			system("cls");
 		}
+		std::cout << "		-FBX CHECKER-\n";
+		std::cout << "\nEXPORTING: PLEASE WAIT\n\n";
 		e->exportFbxFixed();
+		system("cls");
 	}
 
 	else

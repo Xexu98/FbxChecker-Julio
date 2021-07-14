@@ -8,13 +8,18 @@ class Menu
 {
 public:
 	Menu();
+
 	~Menu();
+
 	void init(bool fixFbx);
 
 private:
 	
 	Reader* r;
+
 	ExportFbx* e;
+
 	std::string read;
+
 	const char* filename;
 };

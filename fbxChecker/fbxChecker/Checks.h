@@ -7,6 +7,7 @@ class Checks {
 private:
 	//Check Names utils
 	bool badName = false, goodName = true;
+
 	std::stack<std::string> badNamesStack;
 
 	std::stack<std::string> badUVsNamesStack;
@@ -18,15 +19,17 @@ private:
 	bool _export;
 
 	bool _error;
+
+	int _lFileMajor, _lFileMinor;
 public:
 	/**
 	Checks the whole scene, and prints the results of the check
 
 	@param scene (FbxScene*) scene that will be checked
 	*/
-	void completeCheck(FbxScene* scene, bool exFbx);
+	void completeCheck(FbxScene* scene, bool exFbx, int lFileMajor, int lFileMinor);
 
-	void completeCheck(FbxScene* scene);
+	void completeCheck(FbxScene* scene,int lFileMajor, int lFileMinor);
 
 	bool returnError() { return _error; }
 
@@ -70,9 +73,9 @@ private:
 	void checkName(const char* node);
 
 	/**
-	Checks if the object doesn't have lazy names, and prints the results of the check
+	Checks if the the name of the uv it not lazy
 
-	@param node (FbxNode*) node that will be checked
+	@param node (string*) name that will be checked
 	*/
 	bool checkUVsNames(std::string names);
 
@@ -98,6 +101,10 @@ private:
 	*/
 	void checkUVs(FbxNode* node);
 
+	/**
+	Checks the file version of the actual fbx
+	*/
+	void checkFileVersion();
 
 	void checkTextures(FbxNode* node);
 

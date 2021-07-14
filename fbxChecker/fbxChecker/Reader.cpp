@@ -27,7 +27,9 @@ bool Reader::correctFile(const char* filenmame)
     {
         fixedName = filenmame;
         _scene = FbxScene::Create(_sdkManager, "myScene");
-       
+
+        _importer->GetFileVersion(lFileMajor, lFileMinor, lFileRevision);
+
         _importer->Import(_scene);
         _importer->Destroy();
         return true;
@@ -37,7 +39,7 @@ bool Reader::correctFile(const char* filenmame)
 void Reader::processScene(bool exFbx, ExportFbx* exp,std::string name)
 {
     Checks checker;
-    checker.completeCheck(_scene, exFbx);
+    checker.completeCheck(_scene, exFbx, lFileMajor, lFileMinor);
     exp->assingSdkManager(_sdkManager);
     exp->addFbxToFix(name, _scene, checker.returnError());
 }
@@ -45,19 +47,10 @@ void Reader::processScene(bool exFbx, ExportFbx* exp,std::string name)
 void Reader::processScene()
 {
     Checks checker;    
-    checker.completeCheck(_scene);
+    checker.completeCheck(_scene, lFileMajor, lFileMinor);
 }
 
-  /*  FbxExporter* lExporter = FbxExporter::Create(_sdkManager, "");
-    if (fixedName == "Rotated-Scaled.fbx")
-    {    
-        std::string fixedName = (char*)_scene->GetInitialName();
-        fixedName = "Fixed/" + fixedName + "Fixed.fbx";
-        int lFormat = _sdkManager->GetIOPluginRegistry()->FindWriterIDByDescription(lFileTypes[7]);
-        FileName = fixedName.c_str();
-        result = lExporter->Initialize(FileName, lFormat, _sdkManager->GetIOSettings());
-        result = lExporter->Export(_scene);
-    }*/
+
 
 void Reader::clear()
 {
