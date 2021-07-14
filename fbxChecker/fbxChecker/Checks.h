@@ -9,6 +9,8 @@ private:
 	bool badName = false, goodName = true;
 	std::stack<std::string> badNamesStack;
 
+	std::stack<std::string> badUVsNamesStack;
+
 	int numTabs = 0;
 
 	bool fileFixed = false;
@@ -66,6 +68,13 @@ private:
 	@param node (FbxNode*) node that will be checked
 	*/
 	void checkName(const char* node);
+
+	/**
+	Checks if the object doesn't have lazy names, and prints the results of the check
+
+	@param node (FbxNode*) node that will be checked
+	*/
+	bool checkUVsNames(std::string names);
 
 	/**
 	Checks if the object has n-gons, and prints the results of the check

@@ -204,6 +204,8 @@ void Checks::checkName(const char* nNode) {
             fe.close();
         }
     }
+
+
     //Save the stack in other, we dont need to read the file 
     //more than one time
     std::stack<std::string> saveStack;
@@ -228,6 +230,36 @@ void Checks::checkName(const char* nNode) {
         saveStack.pop();
     }
 }
+
+bool Checks::checkUVsNames(std::string names)
+{
+    std::string name = names, util;
+    if (badUVsNamesStack.empty()) {
+        char textChain[128];
+        std::ifstream fe(fs::current_path().root_name().string() + "BadUVsNames.txt");
+        if (fe.is_open()) {
+            while (!fe.eof()) {
+                fe >> util;
+                badUVsNamesStack.push(util);
+            }
+            fe.close();
+        }
+    }
+
+    std::stack<std::string> saveStack;
+    bool actualBadName = false;
+    while (!badUVsNamesStack.empty() && !actualBadName) {
+        if (name.find(badUVsNamesStack.top()) != std::string::npos) {
+            goodName = false;
+            actualBadName = true;
+        }
+        saveStack.push(badUVsNamesStack.top());
+        badUVsNamesStack.pop();
+    }
+    return actualBadName;
+}
+
+
 
 void Checks::checkNgons(FbxNode* node) {
     const char* nodeName = node->GetName();
@@ -306,12 +338,23 @@ void Checks::checkUVs(FbxNode* node)
     }
     else
     {
-        /*
-        std::cout << "OK: object has UV " << "\n";
+        
+        int numBadNames=0; 
+       
         for (int i = 0; i < lUVSetNameList.GetCount(); i++)
+        {      
+            if(checkUVsNames(lUVSetNameList.GetStringAt(i)))
+            {
+                numBadNames++;
+            }
+           
+        }
+         if (!_export && numBadNames > 0)
         {
-            std::cout << "Name UV: "<< lUVSetNameList.GetStringAt(i)<< "\n";
-        }*/
+             std::string salida = " There are " + std::to_string(numBadNames);
+             salida = salida + " UVs bad names";
+              Output::newFbxProblem(1, salida);
+        }
     }
 }
 
@@ -402,31 +445,10 @@ void Checks::completeCheck(FbxScene* scene, bool exFbx) {
     _export = exFbx;
     if (rootNode) {
 
-        badName = true;
-        goodName = true;
-
         for (int i = 0; i < rootNode->GetChildCount(); i++) {
             processNode(rootNode->GetChild(i));
         }
 
-        if (badName)
-            if (!_export)
-            {
-                Output::newFbxProblem(2, "all the node's names are bad ");
-            }
-            else
-            {
-                _error = true;
-            }
-        else if (!goodName)
-            if (!_export)
-            {
-                Output::newFbxProblem(2, "some names are names are bad ");
-            }
-            else
-            {
-                _error = true;
-            }
     }
 }
 
@@ -435,32 +457,10 @@ void Checks::completeCheck(FbxScene* scene)
     FbxNode* rootNode = scene->GetRootNode();
     if (rootNode) {
 
-        badName = true;
-        goodName = true;
-
         for (int i = 0; i < rootNode->GetChildCount(); i++) {
             processNode(rootNode->GetChild(i));
         }
-
-       
-        if (badName)
-                if (!_export)
-                {
-                   Output::newFbxProblem(2, "all the node's names are bad ");
-                }
-                else
-                {
-                    _error = true;
-                }
-        else if (!goodName)
-                if (!_export)
-                {
-                   Output::newFbxProblem(2, "some names are names are bad ");
-                }
-                else
-                {
-                    _error = true;
-                }
+    
     }
 }
 
